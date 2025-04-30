@@ -1,0 +1,404 @@
+1. Problem Statement: Search a Target in a Large Dataset
+Objective:
+Compare the performance of Linear Search (O(N)) and Binary Search (O(log N)) on different dataset sizes.
+Approach:
+Linear Search: Scan each element until the target is found.
+Binary Search: Sort the data first (O(N log N)), then perform O(log N) search.
+Comparative Analysis:
+Dataset Size (N)
+Linear Search (O(N))
+Binary Search (O(log N))
+1,000
+1ms
+0.01ms
+10,000
+10ms
+0.02ms
+1,000,000
+1s
+0.1ms
+
+Expected Result:
+Binary Search performs much better for large datasets, provided data is sorted.
+public class Q1 {
+   public static void linearSearch(int[] arr,int target){
+
+
+       for(int i=0;i<arr.length;i++){
+           if(arr[i]==target){
+               break;
+           }
+       }
+   }
+
+
+   public static void binary(int [] arr,int target){
+       int left = 0;
+       int right = arr.length-1;
+       while(left<=right){
+           int mid = left + (right-left)/2;
+           if(arr[mid]==target){
+               break;
+           }
+           else if(arr[mid]>target){
+               right = mid-1;
+           }
+           else{
+               left = mid+1;
+           }
+       }
+
+
+   }
+   public static void main(String[] args) {
+//        int arr[] = {1,2,3,4,5,6,7,8,9,10};
+//        int target = 9;
+       int[] sizes = {100 ,1000,100000};
+       for(int i : sizes){
+           System.out.println();
+           System.out.println("Time taken for Size " + i );
+           int[] arr = new int[i];
+           for(int j=0;j<i;j++){
+               arr[j] = j+1;
+           }
+           int target = i-1;
+
+
+           long startTime = System.nanoTime();
+           linearSearch(arr,target);
+           long endTime = System.nanoTime();
+           System.out.println("Time taken: "+(endTime-startTime));
+
+
+           startTime = System.nanoTime();
+           binary(arr,target);
+           endTime = System.nanoTime();
+           System.out.println("Time taken: "+(endTime-startTime));
+
+
+       }
+
+
+   }
+}
+
+
+
+2. Problem Statement: Sorting Large Data Efficiently
+Objective:
+Compare sorting algorithms Bubble Sort (O(N²)), Merge Sort (O(N log N)), and Quick Sort (O(N log N)).
+Approach:
+Bubble Sort: Repeated swapping (inefficient for large data).
+Merge Sort: Divide & Conquer approach (stable).
+Quick Sort: Partition-based approach (fast but unstable).
+
+
+
+Comparative Analysis:
+Dataset Size (N)
+Bubble Sort (O(N²))
+Merge Sort (O(N log N))
+Quick Sort (O(N log N))
+1,000
+50ms
+5ms
+3ms
+10,000
+5s
+50ms
+30ms
+1,000,000
+Unfeasible (>1hr)
+3s
+2s
+
+Expected Result:
+Bubble Sort is impractical for large datasets.
+Merge Sort & Quick Sort perform well.
+import java.util.Arrays;
+import java.util.Random;
+
+
+public class Q2 {
+
+
+   public static int[] RandomArray(int size) {
+       Random rand = new Random();
+       int[] arr = new int[size];
+       for (int i = 0; i < size; i++) arr[i] = rand.nextInt(size);
+       return arr;
+   }
+   public static void bubbleSort(int[] arr){
+       for(int i=0;i<arr.length;i++){
+           for(int j=0;j<arr.length-i-1;j++){
+               if(arr[j]>arr[j+1]){
+                   int temp = arr[j];
+                   arr[j] = arr[j+1];
+                   arr[j+1] = temp;
+               }
+           }
+       }
+   }
+
+
+
+
+
+
+   public static void mergeSort(int[] arr) {
+       if (arr.length < 2) return;
+       int mid = arr.length / 2;
+       int[] left = Arrays.copyOfRange(arr, 0, mid);
+       int[] right = Arrays.copyOfRange(arr, mid, arr.length);
+       mergeSort(left);
+       mergeSort(right);
+       merge(arr, left, right);
+   }
+   private static void merge(int[] arr, int[] left, int[] right) {
+       int i = 0, j = 0, k = 0;
+       while (i < left.length && j < right.length) {
+           arr[k++] = (left[i] <= right[j]) ? left[i++] : right[j++];
+       }
+       while (i < left.length) arr[k++] = left[i++];
+       while (j < right.length) arr[k++] = right[j++];
+   }
+
+
+   public static void quickSort(int[] arr, int low, int high) {
+       if (low < high) {
+           int p = partition(arr, low, high);
+           quickSort(arr, low, p - 1);
+           quickSort(arr, p + 1, high);
+       }
+   }
+   private static int partition(int[] arr, int low, int high) {
+       int pivot = arr[high];
+       int i = low - 1;
+       for (int j = low; j < high; j++) {
+           if (arr[j] < pivot) {
+               i++;
+               int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+           }
+       }
+       int temp = arr[i + 1];
+       arr[i + 1] = arr[high];
+       arr[high] = temp;
+       return i + 1;
+   }
+
+
+
+
+   public static void main(String[] args) {
+       int[] sizes = {100 ,1000,10000};
+       for(int i : sizes){
+           System.out.println();
+           System.out.println("Time taken for Size " + i );
+           int[] arr = RandomArray(i);
+
+
+
+
+           long startTime = System.nanoTime();
+           mergeSort(arr);
+           long endTime = System.nanoTime();
+           System.out.println("Time taken mergeSort : "+(endTime-startTime));
+
+
+           startTime = System.nanoTime();
+           bubbleSort(arr);
+           endTime = System.nanoTime();
+           System.out.println("Time taken bubbleSort: "+(endTime-startTime));
+
+
+
+
+           startTime = System.nanoTime();
+           quickSort(arr,0,arr.length-1);
+           endTime = System.nanoTime();
+           System.out.println("Time taken quickSort: "+(endTime-startTime));
+
+
+
+
+       }
+
+
+   }
+}
+
+
+3. Problem Statement: String Concatenation Performance
+Objective:
+Compare the performance of String (O(N²)), StringBuilder (O(N)), and StringBuffer (O(N)) when concatenating a million strings.
+Approach:
+Using String (Immutable, creates new object each time)
+Using StringBuilder (Fast, mutable, thread-unsafe)
+Using StringBuffer (Thread-safe, slightly slower than StringBuilder)
+Comparative Analysis:
+Operations Count (N)
+String (O(N²))
+StringBuilder (O(N))
+StringBuffer (O(N))
+1,000
+10ms
+1ms
+2ms
+10,000
+1s
+10ms
+12ms
+1,000,000
+30m (Unusable)
+50ms
+60ms
+
+Expected Result:
+StringBuilder & StringBuffer are much more efficient than String.
+Use StringBuilder for single-threaded operations and StringBuffer for multi-threaded.
+public class Q3{
+   public static String string(int n) {
+       String result = "";
+       for (int i = 0; i < n; i++) {
+           result += "a";
+       }
+       return result;
+   }
+   public static String StringBuilder(int n) {
+       StringBuilder result = new StringBuilder();
+       for (int i = 0; i < n; i++) {
+           result.append("a");
+       }
+       return result.toString();
+   }
+   public static String stringBuffer(int n) {
+       @SuppressWarnings("StringBufferMayBeStringBuilder")
+       StringBuffer result = new StringBuffer();
+       for (int i = 0; i < n; i++) {
+           result.append("a");
+       }
+       return result.toString();
+   }
+
+
+   public static void main(String[] args) {
+       int[] sizes = {1000, 10000, 1000000};
+       for (int n : sizes) {
+           System.out.println();
+           System.out.println("array Size: " + n);
+           long start = System.currentTimeMillis();
+           if (n <= 10000) {
+               string(n);
+               long end = System.currentTimeMillis();
+               System.out.println("String  Time: " + (end - start) + " ms");
+           }
+           start = System.currentTimeMillis();
+           StringBuilder(n);
+           long end = System.currentTimeMillis();
+           System.out.println("StringBuilder  Time: " + (end - start) + " ms");
+
+
+           start = System.currentTimeMillis();
+           stringBuffer(n);
+           end = System.currentTimeMillis();
+           System.out.println("StringBuffer  Time: " + (end - start) + " ms");
+       }
+       }
+
+
+}
+
+
+4. Problem Statement: Large File Reading Efficiency
+Objective:
+Compare FileReader (Character Stream) and InputStreamReader (Byte Stream) when reading a large file (500MB).
+Approach:
+FileReader: Reads character by character (slower for binary files).
+InputStreamReader: Reads bytes and converts to characters (more efficient).
+Comparative Analysis:
+File Size
+FileReader Time
+InputStreamReader Time
+1MB
+50ms
+30ms
+100MB
+3s
+1.5s
+500MB
+10s
+5s
+
+Expected Result:
+InputStreamReader is more efficient for large files.
+FileReader is preferable for text-based data.
+
+
+
+5. Problem Statement: Recursive vs Iterative Fibonacci Computation
+Objective:
+Compare Recursive (O(2ⁿ)) vs Iterative (O(N)) Fibonacci solutions.
+Approach:
+Recursive:
+public static int fibonacciRecursive(int n) {
+    if (n <= 1) return n;
+    return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+}
+
+Iterative:
+public static int fibonacciIterative(int n) {
+    int a = 0, b = 1, sum;
+    for (int i = 2; i <= n; i++) {
+        sum = a + b;
+        a = b;
+        b = sum;
+    }
+    return b;
+}
+Comparative Analysis:
+Fibonacci (N)
+Recursive (O(2ⁿ))
+Iterative (O(N))
+10
+1ms
+0.01ms
+30
+5s
+0.05ms
+50
+Unfeasible (>1hr)
+0.1ms
+
+Expected Result:
+Recursive approach is infeasible for large values of N due to exponential growth.
+The iterative approach is significantly faster and memory-efficient.
+
+6. Problem Statement: Comparing Different Data Structures for Searching
+Objective:
+Compare Array (O(N)), HashSet (O(1)), and TreeSet (O(log N)) for searching elements.
+Approach:
+Array: Linear search (O(N)).
+HashSet: Uses hashing (O(1) on average).
+TreeSet: Balanced BST (O(log N)).
+Comparative Analysis:
+Dataset Size (N)
+Array Search (O(N))
+HashSet Search (O(1))
+TreeSet Search (O(log N))
+1,000
+1ms
+0.01ms
+0.1ms
+100,000
+100ms
+0.01ms
+10ms
+1,000,000
+1s
+0.01ms
+20ms
+
+Expected Result:
+HashSet is fastest for lookups but requires extra memory.
+TreeSet maintains order but is slightly slower than HashSet.
+
